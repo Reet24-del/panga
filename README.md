@@ -9,6 +9,8 @@ Paste a client's brief and messages. Panga finds the hidden work (with the clien
 
 Built on **Gemma 4**, an open-weight model, served by **DigitalOcean Serverless Inference**. Built for the Hacktoberfest 2026 Open-Source AI Challenge (Week 2, "Side Hustle"). MIT licensed.
 
+**Live demo:** https://panga-gnb2.onrender.com (free instance, so the first visit after a quiet spell can take about a minute to wake up). Click **Try the sample deal**.
+
 ---
 
 ## The journey
@@ -26,10 +28,11 @@ Built on **Gemma 4**, an open-weight model, served by **DigitalOcean Serverless 
 | Technology | What it does in Panga | Where |
 | --- | --- | --- |
 | **Gemma 4 (open weights)** | Reads briefs, plays the simulated client, analyses rehearsal replays, explains research, drafts replies. | `src/mastra/index.ts`, `src/server/prompts.ts` |
-| **DigitalOcean** | *Serverless Inference* serves Gemma (`gemma-4-31B-it`) and embeddings through its OpenAI-compatible API. *App Platform* runs the web app and the Temporal worker (`.do/app.yaml`). *Spaces* keeps original PDFs and voice notes, private, behind five-minute signed links. | `src/server/llm.ts`, `src/server/embeddings.ts`, `src/server/spaces.ts` |
+| **DigitalOcean** | *Serverless Inference* serves Gemma (`gemma-4-31B-it`) and embeddings through its OpenAI-compatible API. `.do/app.yaml` deploys the web app and the Temporal worker to *App Platform*. *Spaces* keeps original PDFs and voice notes, private, behind five-minute signed links. | `src/server/llm.ts`, `src/server/embeddings.ts`, `src/server/spaces.ts` |
 | **Mastra** | Four agents (scope analyst, researcher, client simulator, proposal writer) on Gemma, with per-call instructions and streaming. | `src/mastra/index.ts`, `src/server/llm.ts` |
 | **Temporal** | One durable workflow per deal: analysis with retries (configuration errors fail fast), waits for rehearsals and approval, then a two-week timer that asks how the project went. Tested on Temporal's time-skipping server. | `src/server/temporal/*` |
-| **Tiger Data** | Postgres with pgvector: deals, past projects with embeddings, and hybrid search (vector similarity + full-text rank). Locally the same SQL runs on PGlite. | `src/server/db.ts`, `src/server/projects-repo.ts` |
+| **Tiger Data** | Postgres with pgvector on a Tiger Cloud free service: deals, past projects with embeddings, and hybrid search (vector similarity + full-text rank). Locally the same SQL runs on PGlite. | `src/server/db.ts`, `src/server/projects-repo.ts` |
+| **Render** | Hosts the live demo on a free web service, redeploying on every push to `main`. | Render dashboard (settings below) |
 | **ElevenLabs** | Voice rehearsal: an ElevenLabs agent whose *Custom LLM* is Panga's endpoint, so Gemma decides what the client says while ElevenLabs handles speech. Also speech-to-text for client voice notes. | `src/app/api/sim/v1/chat/completions/route.ts`, `src/components/deal/VoiceCall.tsx`, `scripts/setup-elevenlabs-agent.mjs` |
 | **SerpApi** | "What does this involve?" research on unfamiliar requirements, with numbered, linked sources. Uncited claims are dropped. | `src/server/serp.ts`, `src/server/pipeline.ts` |
 | **Backboard** | Remembers your minimum rate, tone, work you never include, and the corrections you make to extracted scopes. Recalled notes are given to the scope analyst on the next brief. | `src/server/memory.ts` |
@@ -50,7 +53,7 @@ Every integration is optional except the model: without a key, that feature swit
 
 ```mermaid
 flowchart LR
-  B["Browser"] --> W["Next.js on DO App Platform"]
+  B["Browser"] --> W["Next.js on Render or DO App Platform"]
   W -->|uploads| S[("DO Spaces")]
   W -->|start / signal| T["Temporal: dealReview workflow"]
   T --> K["Worker on DO App Platform"]
@@ -59,7 +62,7 @@ flowchart LR
   W & K --> M["Backboard memory"]
   W --> R["SerpApi"]
   B -->|voice| E["ElevenLabs agent"]
-  E -->|Custom LLM| X["/api/sim/v1 on App Platform"]
+  E -->|Custom LLM| X["/api/sim/v1 on the web app"]
   X --> G
   W & K -.->|traces| N["Sentry"]
 ```
@@ -94,6 +97,17 @@ Open http://localhost:3100 and click **Load the sample deal**. The stand-in mode
 
 Add other keys as you get them; each feature lights up on its own.
 
+## Deploy to Render (free) with Tiger Data
+
+This is how the live demo runs, at no cost.
+
+1. Create a free service in [Tiger Cloud](https://console.cloud.tigerdata.com) (Shared compute, US East) and copy its connection string.
+2. In Render: **New → Web Service**, pick this repository, branch `main`, region **Virginia** (next to the database), instance type **Free**.
+3. Build command `npm ci && npm run build`. Start command `node --max-old-space-size=400 node_modules/next/dist/bin/next start`. Health check `/api/health`.
+4. Environment variables: `DO_MODEL_ACCESS_KEY`, `DATABASE_URL` (the Tiger connection string), `PANGA_MODEL=gemma-4-31B-it`, `PANGA_EMBEDDING_MODEL=qwen3-embedding-0.6b`, `MASTRA_TELEMETRY_DISABLED=true`.
+
+A hosted database is required on the free plan: the embedded PGlite database needs about 900 MB of memory, more than the free instance has. Tiger hands out `sslmode=require`, which Panga reads the libpq way (encrypted, certificate not pinned) so its private CA connects.
+
 ## Deploy to DigitalOcean App Platform
 
 1. Push this repository to GitHub.
@@ -111,7 +125,7 @@ Without `DATABASE_URL`, the app uses PGlite on the container's disk, which is re
 npm test
 ```
 
-103 tests cover the economics (the PRD's worked example: 45 h, ₹333/h, ₹31,500 floor, ₹34,000 full price), quote verification, JSON repair, rehearsal tags and streaming tag stripping, reply amount checks (including price ranges like "12-15k"), scope building, linking replay promises to work items, server-side checks on edits (tampered evidence is dropped), the database layer against real Postgres semantics (PGlite with pgvector), and the deal workflow on Temporal's time-skipping server. `npm run typecheck` and `npm run build` must pass too.
+105 tests cover the economics (the PRD's worked example: 45 h, ₹333/h, ₹31,500 floor, ₹34,000 full price), quote verification, JSON repair, rehearsal tags and streaming tag stripping, reply amount checks (including price ranges like "12-15k"), scope building, linking replay promises to work items, server-side checks on edits (tampered evidence is dropped), the database layer against real Postgres semantics (PGlite with pgvector), and the deal workflow on Temporal's time-skipping server. `npm run typecheck` and `npm run build` must pass too.
 
 ## Project layout
 

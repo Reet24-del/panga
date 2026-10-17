@@ -77,10 +77,27 @@ CREATE TABLE IF NOT EXISTS sim_calls (
 );
 `;
 
+/**
+ * Hosted Postgres such as Tiger Cloud hands out `sslmode=require`, which in
+ * libpq means "encrypt, but don't verify the certificate". node-postgres reads
+ * it as verify-full and then rejects Tiger's private CA, so opt into the libpq
+ * meaning. Explicit verify-ca/verify-full URLs are left alone.
+ */
+export function withLibpqSsl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.searchParams.get('sslmode') !== 'require' || u.searchParams.has('uselibpqcompat')) return url;
+    u.searchParams.set('uselibpqcompat', 'true');
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 async function connectPostgres(url: string): Promise<Db> {
   const pg = await import('pg');
   const Pool = (pg.default ?? pg).Pool;
-  const pool = new Pool({ connectionString: url, max: 5, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 10_000 });
+  const pool = new Pool({ connectionString: withLibpqSsl(url), max: 5, idleTimeoutMillis: 30_000, connectionTimeoutMillis: 10_000 });
   pool.on('error', (err: Error) => console.error('[db] idle client error:', err.message));
   const run = (client: { query: (s: string, p?: unknown[]) => Promise<{ rows: unknown[] }> }) =>
     (<T>(sql: string, params?: unknown[]) => client.query(sql, params) as Promise<{ rows: T[] }>) as Queryable['query'];

@@ -1,7 +1,7 @@
 // Runs the real SQL against an in-memory Postgres (PGlite with pgvector).
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { resetDb } from './db';
+import { resetDb, withLibpqSsl } from './db';
 import { createSimCall, deleteDeal, getOwnedDeal, insertDeal, listDeals, resolveSimCall, updateDeal } from './deals-repo';
 import { DEFAULT_PREFERENCES, loadMemory, recallForBrief, rememberCorrections, savePreferences } from './memory';
 import { newDeal } from './pipeline';
@@ -25,6 +25,27 @@ afterAll(async () => {
 function deal(title = 'Bakery website') {
   return newDeal({ workspaceId: WS, title, currency: 'INR', offeredPrice: 20000, minimumRate: 800, sources: [{ kind: 'brief', label: '', text: 'We need a bakery website with online orders.' }] });
 }
+
+describe('postgres urls', () => {
+  it('reads sslmode=require the libpq way, so private CAs like Tiger Cloud connect', () => {
+    const url = 'postgres://tsdbadmin:p%40ss@abc.tsdb.cloud.timescale.com:31234/tsdb?sslmode=require';
+    const out = new URL(withLibpqSsl(url));
+    expect(out.searchParams.get('uselibpqcompat')).toBe('true');
+    expect(out.searchParams.get('sslmode')).toBe('require');
+    expect(out.password).toBe('p%40ss');
+  });
+
+  it('leaves stricter or already-explicit URLs alone', () => {
+    for (const url of [
+      'postgres://u:p@h:5432/db?sslmode=verify-full',
+      'postgres://u:p@h:5432/db?sslmode=require&uselibpqcompat=false',
+      'postgres://u:p@h:5432/db',
+      'not a url',
+    ]) {
+      expect(withLibpqSsl(url)).toBe(url);
+    }
+  });
+});
 
 describe('deals', () => {
   it('stores, scopes to the workspace, updates and lists', async () => {
