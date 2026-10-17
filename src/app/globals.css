@@ -72,6 +72,12 @@ html {
   background: var(--bg);
 }
 
+html,
+body {
+  /* Full-bleed bands use 100vw, which includes the scrollbar on some systems. */
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -762,12 +768,21 @@ h3 {
 
 /* ---------- Home ---------- */
 
+/* The hero and the marquee run edge to edge: they break out of the 1240px
+   shell, while the copy still lines up with the shell's content edge. */
+.hero,
+.marquee {
+  margin-inline: calc(50% - 50vw);
+}
+
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 0;
+  margin-top: -28px;
   margin-bottom: 0;
-  border: 1px solid var(--rule);
+  min-height: min(920px, calc(100svh - 72px));
+  border-bottom: 1px solid var(--rule);
 }
 
 @media (max-width: 900px) {
@@ -781,8 +796,9 @@ h3 {
   z-index: 2;
   display: grid;
   gap: 18px;
-  align-content: start;
-  padding: clamp(22px, 4vw, 48px);
+  align-content: center;
+  padding: clamp(28px, 5vw, 64px) clamp(22px, 4vw, 56px);
+  padding-left: max(clamp(16px, 4vw, 48px), calc((100vw - 1240px) / 2 + 16px));
   min-width: 0;
 }
 
@@ -974,7 +990,6 @@ h3 {
   overflow: hidden;
   background: var(--red);
   color: var(--ink);
-  border-inline: 1px solid var(--rule);
   margin-bottom: 36px;
 }
 
