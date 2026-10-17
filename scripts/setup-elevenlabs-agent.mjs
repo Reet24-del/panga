@@ -31,7 +31,7 @@ if (missing.length) {
   process.exit(1);
 }
 if (!/^https:\/\//.test(publicUrl) && !process.env.ELEVENLABS_BASE_URL) {
-  console.error('PANGA_PUBLIC_URL must be an https URL that ElevenLabs can reach (your App Platform URL).');
+  console.error('PANGA_PUBLIC_URL must be an https URL that ElevenLabs can reach (your deployed app).');
   process.exit(1);
 }
 
@@ -83,6 +83,6 @@ if (existing) {
 } else {
   const created = await call('POST', '/v1/convai/agents/create', agent);
   console.log(`Created agent ${created.agent_id}.`);
-  console.log(`\nAdd this to .env.local and to App Platform's environment variables:\n  ELEVENLABS_AGENT_ID=${created.agent_id}`);
+  console.log(`\nAdd this to .env.local and to your host's environment variables (Render or App Platform):\n  ELEVENLABS_AGENT_ID=${created.agent_id}`);
 }
 console.log(`The agent asks ${publicUrl}/api/sim/v1/chat/completions what the client says.`);

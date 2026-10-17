@@ -127,7 +127,7 @@ Without `DATABASE_URL`, the app uses PGlite on the container's disk, which is re
 npm test
 ```
 
-105 tests cover the economics (the PRD's worked example: 45 h, ₹333/h, ₹31,500 floor, ₹34,000 full price), quote verification, JSON repair, rehearsal tags and streaming tag stripping, reply amount checks (including price ranges like "12-15k"), scope building, linking replay promises to work items, server-side checks on edits (tampered evidence is dropped), the database layer against real Postgres semantics (PGlite with pgvector), and the deal workflow on Temporal's time-skipping server. `npm run typecheck` and `npm run build` must pass too.
+106 tests cover the economics (the PRD's worked example: 45 h, ₹333/h, ₹31,500 floor, ₹34,000 full price), quote verification, JSON repair, rehearsal tags and streaming tag stripping, reply amount checks (including price ranges like "12-15k"), scope building, linking replay promises to work items, server-side checks on edits (tampered evidence is dropped), the database layer against real Postgres semantics (PGlite with pgvector), and the deal workflow on Temporal's time-skipping server. `npm run typecheck` and `npm run build` must pass too.
 
 ## Project layout
 

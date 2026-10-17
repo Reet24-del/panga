@@ -164,6 +164,24 @@ function kindOf(m: Stored): MemoryItem['kind'] {
   return k === 'preference' || k === 'correction' ? k : 'note';
 }
 
+/**
+ * Preference values are stored as JSON text under `json`: Backboard's API
+ * rejects (HTTP 500) any memory whose metadata has a text field named `value`.
+ * Memories saved before this change still carry `value`.
+ */
+function prefValue(m: Stored | undefined): unknown {
+  if (!m) return undefined;
+  const raw = m.metadata.json;
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return undefined;
+    }
+  }
+  return m.metadata.value;
+}
+
 function prefsFrom(memories: Stored[]): Preferences {
   const latest = new Map<PrefKey, Stored>();
   for (const m of memories) {
@@ -172,7 +190,7 @@ function prefsFrom(memories: Stored[]): Preferences {
     const prev = latest.get(key);
     if (!prev || (m.createdAt ?? '') > (prev.createdAt ?? '')) latest.set(key, m);
   }
-  const value = (k: PrefKey) => latest.get(k)?.metadata.value;
+  const value = (k: PrefKey) => prefValue(latest.get(k));
   const rate = Number(value('minimum_rate'));
   const currency = value('currency') as Currency;
   const tone = value('tone') as Tone;
@@ -247,7 +265,7 @@ export async function savePreferences(ws: string, next: Preferences): Promise<Me
     for (const old of all.filter((m) => m.metadata.kind === 'preference' && m.metadata.key === key)) {
       await b.remove(ws, old.id).catch((err) => report(err, { step: 'memory.remove' }));
     }
-    await b.add(ws, describe(key, next), { kind: 'preference', key, value: values[key] });
+    await b.add(ws, describe(key, next), { kind: 'preference', key, json: JSON.stringify(values[key]) });
   }
   return loadMemory(ws);
 }

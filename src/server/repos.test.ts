@@ -1,7 +1,7 @@
 // Runs the real SQL against an in-memory Postgres (PGlite with pgvector).
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { resetDb, withLibpqSsl } from './db';
+import { getDb, resetDb, withLibpqSsl } from './db';
 import { createSimCall, deleteDeal, getOwnedDeal, insertDeal, listDeals, resolveSimCall, updateDeal } from './deals-repo';
 import { DEFAULT_PREFERENCES, loadMemory, recallForBrief, rememberCorrections, savePreferences } from './memory';
 import { newDeal } from './pipeline';
@@ -125,6 +125,26 @@ describe('memory (local fallback)', () => {
     const again = await savePreferences(WS, { ...view.preferences, minimumRate: 900 });
     expect(again.preferences.minimumRate).toBe(900);
     expect(again.memories.filter((m) => m.content.startsWith('Minimum hourly rate'))).toHaveLength(1);
+  });
+
+  it('stores preference values as JSON text, never as a text `value` (Backboard rejects that), and still reads old ones', async () => {
+    const ws = 'ws_prefs_format_000000000001';
+    await savePreferences(ws, { ...DEFAULT_PREFERENCES, tone: 'english_formal', neverInclude: ['hosting'] });
+    const db = await getDb();
+    const { rows } = await db.query<{ metadata: Record<string, unknown> }>("SELECT metadata FROM memories WHERE workspace_id = $1 AND kind = 'preference'", [ws]);
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) {
+      expect(r.metadata).not.toHaveProperty('value');
+      expect(typeof r.metadata.json).toBe('string');
+    }
+    await db.query('INSERT INTO memories (id, workspace_id, kind, content, metadata) VALUES ($1, $2, $3, $4, $5::jsonb)', [
+      'mem_old_format_1',
+      ws,
+      'preference',
+      'Quotes in USD.',
+      JSON.stringify({ kind: 'preference', key: 'currency', value: 'USD' }),
+    ]);
+    expect((await loadMemory(ws)).preferences).toMatchObject({ currency: 'USD', tone: 'english_formal', neverInclude: ['hosting'] });
   });
 
   it('remembers corrections once and recalls relevant ones for a brief', async () => {
