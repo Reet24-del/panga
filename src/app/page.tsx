@@ -13,24 +13,24 @@ export default function HomePage() {
           <h1 className="hero-logo">
             <Logo animate />
           </h1>
-          <div className="define">
-            <div className="head">
+          <p className="define">
+            <span className="head">
               pan·ga<span className="phon">[pung-gaa]</span>
               <i>noun, Hindi</i>
-            </div>
-            <ol>
-              <li>Trouble you pick on purpose.</li>
-              <li>
-                What <b>“a simple online store for ₹15,000”</b> turns into, three WhatsApp messages later.
-              </li>
-            </ol>
-          </div>
+            </span>
+            <span className="meaning">Trouble you pick on purpose.</span>
+          </p>
+          {/* One line per choice: take it, change the deal, walk away. */}
           <p className="hero-q">
-            Lena hai? Negotiate karna hai? <mark>Ya chhodna hai?</mark>
+            <span>Lena hai?</span>
+            <span>Negotiate karna hai?</span>
+            <span>
+              <mark>Ya chhodna hai?</mark>
+            </span>
           </p>
           <p className="hero-sub">
-            Paste the brief and the chat. Panga digs out the <b>hidden work</b>, shows what the deal <b>really pays per hour</b>, and puts you on a
-            practice call with the client from hell before you say yes.
+            Paste the brief and the chat. Panga finds the <b>hidden work</b> and the <b>real hourly rate</b>, then lets you practise the call
+            first.
           </p>
           <div className="row">
             <a href="#start" className="btn btn-primary btn-big">

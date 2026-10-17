@@ -795,7 +795,7 @@ h3 {
   position: relative;
   z-index: 2;
   display: grid;
-  gap: 18px;
+  gap: 26px;
   align-content: center;
   padding: clamp(28px, 5vw, 64px) clamp(22px, 4vw, 56px);
   padding-left: max(clamp(16px, 4vw, 48px), calc((100vw - 1240px) / 2 + 16px));
@@ -808,9 +808,11 @@ h3 {
 }
 
 .define {
-  display: grid;
-  gap: 4px;
-  max-width: 54ch;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
 }
 
 .define .head {
@@ -830,30 +832,23 @@ h3 {
   margin-left: 6px;
 }
 
-.define ol {
-  margin: 0;
-  padding-left: 22px;
+.define .meaning {
   color: var(--muted);
-  font-size: 17px;
-}
-
-.define ol li::marker {
-  color: var(--red);
-  font-weight: 900;
-}
-
-.define ol b {
-  color: var(--text);
+  font-size: 18px;
 }
 
 .hero-q {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   font-stretch: 62%;
   font-weight: 900;
-  font-size: clamp(34px, 5.4vw, 64px);
+  font-size: clamp(34px, 4.4vw, 56px);
   line-height: 0.95;
   text-transform: uppercase;
   letter-spacing: -0.01em;
+}
+
+.hero-q span {
+  display: block;
 }
 
 .hero-q mark {
@@ -864,9 +859,9 @@ h3 {
 
 .hero-sub {
   margin: 0;
-  max-width: 52ch;
+  max-width: 44ch;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .hero-sub b {
