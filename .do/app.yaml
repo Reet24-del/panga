@@ -1,0 +1,58 @@
+# DigitalOcean App Platform spec for Panga.
+#
+#   doctl apps create --spec .do/app.yaml
+#
+# Forked it? Point both `repo:` lines at your fork first. Keys are not
+# stored here: add them as encrypted environment variables in the App
+# Platform console (Settings > App-Level Environment Variables), as listed
+# in README.md under "Deploy to DigitalOcean".
+
+name: panga
+region: blr
+
+envs:
+  - key: NODE_ENV
+    value: production
+    scope: RUN_TIME
+  - key: DO_INFERENCE_BASE_URL
+    value: https://inference.do-ai.run/v1
+    scope: RUN_TIME
+  - key: PANGA_MODEL
+    value: gemma-4-31B-it
+    scope: RUN_TIME
+  - key: MASTRA_TELEMETRY_DISABLED
+    value: "true"
+    scope: RUN_TIME
+  - key: SPACES_REGION
+    value: blr1
+    scope: RUN_TIME
+
+services:
+  - name: web
+    github:
+      repo: Reet24-del/panga
+      branch: main
+      deploy_on_push: true
+    environment_slug: node-js
+    build_command: npm run build
+    run_command: npm start
+    http_port: 8080
+    instance_size_slug: apps-s-1vcpu-1gb
+    instance_count: 1
+    health_check:
+      http_path: /api/health
+
+# The Temporal worker runs the durable deal workflows. It needs TEMPORAL_*
+# and DATABASE_URL (Tiger Data), because it shares the database with the web
+# service. Remove this block if you are not using Temporal yet.
+workers:
+  - name: deal-worker
+    github:
+      repo: Reet24-del/panga
+      branch: main
+      deploy_on_push: true
+    environment_slug: node-js
+    build_command: npm run build
+    run_command: npm run worker
+    instance_size_slug: apps-s-1vcpu-1gb
+    instance_count: 1

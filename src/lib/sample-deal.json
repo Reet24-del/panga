@@ -1,0 +1,16 @@
+{
+  "title": "Saanjh Studio online store",
+  "currency": "INR",
+  "sources": [
+    {
+      "kind": "brief",
+      "label": "Brief (email)",
+      "text": "Hi! We are Saanjh Studio, a small clothing label from Pune. We need a simple online store for my clothing brand, nothing fancy, just clean and modern. Most customers will buy from phone, so it must look good on mobile. Our budget is ₹15,000. We want to go live before the Diwali sale."
+    },
+    {
+      "kind": "chat",
+      "label": "WhatsApp thread",
+      "text": "[10:02] Saanjh Studio: hi! did you see the brief?\n[10:05] Saanjh Studio: also we have around 200 products on Instagram, those need to come on the site\n[10:06] Saanjh Studio: UPI and cards both should work\n[10:09] Saanjh Studio: my team will send photos, you can add them with the products\n[10:12] Saanjh Studio: and small changes later also, like banners for every sale. wo sab bhi aap kar dena\n[10:13] Saanjh Studio: total 15k is fine na? my cousin said these sites are easy, jaldi ho jayega"
+    }
+  ]
+}

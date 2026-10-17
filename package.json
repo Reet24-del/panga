@@ -1,0 +1,53 @@
+{
+  "name": "panga",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Know what you're agreeing to. An AI deal room for freelancers, built on open-weight models.",
+  "license": "MIT",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "worker": "tsx src/server/temporal/worker.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "mock:services": "node scripts/mock-services.mjs",
+    "dev:mock": "node scripts/dev-mock.mjs",
+    "setup:voice": "node scripts/setup-elevenlabs-agent.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@electric-sql/pglite-pgvector": "0.0.11",
+    "@elevenlabs/react": "1.18.0",
+    "@mastra/core": "1.78.0",
+    "@mastra/observability": "1.20.1",
+    "@mastra/sentry": "1.2.27",
+    "@sentry/nextjs": "10.76.2",
+    "@sentry/node": "10.76.2",
+    "@temporalio/activity": "1.24.0",
+    "@temporalio/client": "1.24.0",
+    "@temporalio/worker": "1.24.0",
+    "@temporalio/workflow": "1.24.0",
+    "aws4fetch": "1.0.20",
+    "next": "16.4.2",
+    "pg": "8.23.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tsx": "4.23.15",
+    "unpdf": "1.9.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@temporalio/testing": "1.24.0",
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}

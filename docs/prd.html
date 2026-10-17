@@ -1,0 +1,641 @@
+<title>Panga PRD</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a case-file dossier. Sticky index on the left (desktop), one reading column, stamped section numbers that follow the real build order. */
+:root {
+  --paper: #f2f4f1;
+  --sheet: #fbfcfa;
+  --ink: #18201c;
+  --muted: #59645e;
+  --rule: #d3d9d3;
+  --accent: #2346c4;
+  --accent-soft: #e3e8fa;
+  --take: #1d7a46;
+  --change: #a86400;
+  --walk: #b7322a;
+  --take-soft: #e2f1e7;
+  --change-soft: #f8ecd9;
+  --walk-soft: #f7e2e0;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #101412; --sheet: #161b18; --ink: #e5eae6; --muted: #9aa59f; --rule: #2c3530;
+    --accent: #8ea4ff; --accent-soft: #1f2744;
+    --take: #5cc98a; --change: #f0a94a; --walk: #ff7d72;
+    --take-soft: #16291e; --change-soft: #2e2313; --walk-soft: #321a18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #101412; --sheet: #161b18; --ink: #e5eae6; --muted: #9aa59f; --rule: #2c3530;
+  --accent: #8ea4ff; --accent-soft: #1f2744;
+  --take: #5cc98a; --change: #f0a94a; --walk: #ff7d72;
+  --take-soft: #16291e; --change-soft: #2e2313; --walk-soft: #321a18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-block: 40px 96px; }
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 24px 64px; } nav.toc { display: none; } }
+
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 13px; }
+nav.toc .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+nav.toc a { display: grid; grid-template-columns: 28px 1fr; color: var(--muted); text-decoration: none; padding: 3px 0; }
+nav.toc a span { font-family: var(--mono); font-size: 11px; padding-top: 2px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); }
+
+main { min-width: 0; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Cover */
+.cover { border: 1.5px solid var(--ink); background: var(--sheet); padding: 28px clamp(18px, 4vw, 40px) 32px; position: relative; }
+.cover-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--rule); padding-bottom: 14px; margin-bottom: 22px; }
+.cover-meta b { color: var(--ink); font-weight: 500; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(64px, 12vw, 128px); line-height: .85; letter-spacing: .01em; margin: 0; text-transform: uppercase; }
+.tag { font-family: var(--display); font-weight: 600; font-size: clamp(22px, 3.2vw, 32px); margin: 10px 0 0; text-wrap: balance; }
+.question { margin: 22px 0 0; font-size: 19px; max-width: 46ch; }
+.question q { font-style: italic; }
+.stamps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.stamp { font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: .06em; padding: 6px 14px 4px; border: 2.5px solid currentColor; text-transform: uppercase; }
+.stamp.take { color: var(--take); } .stamp.change { color: var(--change); } .stamp.walk { color: var(--walk); }
+
+/* Sections */
+section { padding-top: 56px; scroll-margin-top: 24px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1.5px solid var(--ink); padding-bottom: 8px; margin-bottom: 22px; }
+.sec-num { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+h2 { font-family: var(--display); font-weight: 800; font-size: clamp(30px, 4.4vw, 42px); text-transform: uppercase; line-height: 1; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+h3 { font-family: var(--body); font-weight: 600; font-size: 18px; margin: 30px 0 8px; text-wrap: balance; }
+p, li { max-width: 70ch; }
+p { margin: 0 0 14px; }
+ul, ol { padding-left: 22px; margin: 0 0 14px; }
+li { margin-bottom: 4px; }
+.lede { font-size: 18px; }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+code { background: var(--accent-soft); padding: 1px 5px; border-radius: 3px; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--sheet); padding: 14px 18px; margin: 18px 0; max-width: 74ch; }
+.callout.warn { border-left-color: var(--change); }
+.callout.risk { border-left-color: var(--walk); }
+.callout p:last-child, .callout ul:last-child { margin-bottom: 0; }
+.callout .k { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+
+.tbl { overflow-x: auto; margin: 14px 0 20px; border: 1px solid var(--rule); background: var(--sheet); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--paper); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+tr.total td { font-weight: 600; border-top: 1.5px solid var(--ink); }
+td .id { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+.pill { display: inline-block; font-family: var(--mono); font-size: 11px; padding: 1px 7px; border-radius: 99px; white-space: nowrap; letter-spacing: .03em; }
+.p-core { background: var(--accent-soft); color: var(--accent); }
+.p-wrap { background: var(--take-soft); color: var(--take); }
+.p-proc { background: var(--paper); color: var(--muted); border: 1px solid var(--rule); }
+.p-cond { background: var(--change-soft); color: var(--change); }
+.p-low { background: var(--take-soft); color: var(--take); }
+.p-mid { background: var(--change-soft); color: var(--change); }
+.p-high { background: var(--walk-soft); color: var(--walk); }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0; }
+.card { background: var(--sheet); border: 1px solid var(--rule); padding: 16px 18px; min-width: 0; }
+.card h4 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+.card p { font-size: 14px; margin: 0 0 8px; }
+.card p:last-child { margin: 0; }
+.card .k { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 16px 0; }
+.screen { border: 1.5px solid var(--ink); background: var(--sheet); min-width: 0; }
+.screen .bar { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 7px 12px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 8px; }
+.screen .body { padding: 12px 14px 14px; font-size: 14px; }
+.screen .body p { margin: 0 0 6px; }
+.ev { border-left: 2px solid var(--accent); padding-left: 8px; font-size: 13px; color: var(--muted); font-style: italic; }
+.hyp { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--change); }
+
+.quote-line { font-size: 17px; font-style: italic; border-left: 3px solid var(--walk); padding: 4px 0 4px 14px; margin: 14px 0; max-width: 60ch; }
+.quote-line .hyp { display: block; font-style: normal; margin-top: 4px; }
+
+.timeline { display: grid; gap: 0; margin: 16px 0; border-left: 1.5px solid var(--ink); }
+.tl { padding: 0 0 18px 20px; position: relative; }
+.tl::before { content: ""; position: absolute; left: -6px; top: 7px; width: 10px; height: 10px; background: var(--paper); border: 1.5px solid var(--ink); }
+.tl .when { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.tl h4 { margin: 2px 0 4px; font-size: 16px; }
+.tl ul { margin-bottom: 0; font-size: 14px; }
+.tl .gate { font-family: var(--mono); font-size: 12px; color: var(--take); margin-top: 6px; }
+
+pre.mermaid { background: var(--sheet); border: 1px solid var(--rule); padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 13px; }
+pre.formula { font-family: var(--mono); font-size: 13px; background: var(--sheet); border: 1px solid var(--rule); padding: 14px 16px; overflow-x: auto; line-height: 1.7; margin: 12px 0 18px; }
+
+.sources li { font-size: 13px; }
+footer { margin-top: 56px; padding-top: 14px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Sections">
+  <div class="lbl">Dossier index</div>
+  <ol>
+    <li><a href="#summary"><span>01</span>Summary</a></li>
+    <li><a href="#problem"><span>02</span>Problem &amp; user</a></li>
+    <li><a href="#goals"><span>03</span>Goals &amp; non-goals</a></li>
+    <li><a href="#journey"><span>04</span>Core journey</a></li>
+    <li><a href="#requirements"><span>05</span>Requirements</a></li>
+    <li><a href="#economics"><span>06</span>Economics engine</a></li>
+    <li><a href="#rehearsal"><span>07</span>Client From Hell</a></li>
+    <li><a href="#trust"><span>08</span>Trust rules</a></li>
+    <li><a href="#architecture"><span>09</span>Architecture</a></li>
+    <li><a href="#data"><span>10</span>Data model</a></li>
+    <li><a href="#sponsors"><span>11</span>Sponsor tracker</a></li>
+    <li><a href="#design"><span>12</span>Screens</a></li>
+    <li><a href="#metrics"><span>13</span>Success metrics</a></li>
+    <li><a href="#plan"><span>14</span>Build plan</a></li>
+    <li><a href="#risks"><span>15</span>Risks</a></li>
+    <li><a href="#submission"><span>16</span>Submission</a></li>
+    <li><a href="#open"><span>17</span>Open questions</a></li>
+    <li><a href="#sources"><span>18</span>Sources</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="cover">
+  <div class="cover-meta">
+    <span>File <b>PANGA-PRD</b></span>
+    <span>Version <b>1.0</b></span>
+    <span>Status <b>Ready to build</b></span>
+    <span>Contest <b>HF26 Week 2 · Side Hustle</b></span>
+    <span>Due <b>18 Oct, 11:59 PM PDT</b> (19 Oct, 12:29 PM IST)</span>
+  </div>
+  <h1>Panga</h1>
+  <p class="tag">Know what you're agreeing to.</p>
+  <p class="question">An AI deal room for freelancers that answers one question before they reply to a client: <q>Lena hai, negotiate karna hai, ya chhodna hai?</q></p>
+  <div class="stamps" aria-label="The three decisions">
+    <span class="stamp take">Take it</span>
+    <span class="stamp change">Change the deal</span>
+    <span class="stamp walk">Walk away</span>
+  </div>
+</header>
+
+<section id="summary">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Summary</h2></div>
+  <p class="lede">Freelance web designers and developers quote fixed prices from vague briefs, then discover the real work after they have said yes. Panga reads the brief and client messages, finds the hidden work with evidence, calculates what the deal pays per hour, and lets the freelancer rehearse the hard conversation against a voice-simulated client before they send a quote.</p>
+  <div class="grid2">
+    <div class="card"><span class="k">Signature mode</span><h4>🔥 Client From Hell</h4><p>The proposed project becomes a live voice call with a simulated client who pushes on every gap in the brief. Afterwards, Panga replays the call and highlights what the freelancer accidentally promised.</p></div>
+    <div class="card"><span class="k">Output</span><h4>A quote you can defend</h4><p>Three options (a smaller package inside the budget, a full-scope price, a polite decline) and a draft reply. Nothing is sent without the freelancer's approval.</p></div>
+    <div class="card"><span class="k">Demo hook</span><h4>One line for the post</h4><p>"I built Panga so freelancers can meet their client from hell before signing the deal."</p></div>
+  </div>
+  <div class="callout"><span class="k">Why open-source AI matters here</span>
+    <p>Client briefs contain private business details. Panga runs Gemma, an open-weight model, on DigitalOcean infrastructure the builder controls, so briefs are not sent to a closed model vendor. It also keeps the cost of a deal review low enough that a per-deal price can work for freelancers earning in rupees, and the model can be swapped or fine-tuned for the narrow job of reading briefs.</p>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Problem &amp; user</h2></div>
+  <h3>The problem</h3>
+  <ul>
+    <li><strong>Hidden work.</strong> "A simple online store" turns out to include migrating 200 products, payment setup, mobile layouts and "small updates later". These details are often scattered across WhatsApp messages, not in one brief.</li>
+    <li><strong>Quoting by feel.</strong> Freelancers rarely convert a fixed price into an effective hourly rate, so they don't see that a deal pays below their minimum.</li>
+    <li><strong>Saying yes on the call.</strong> Most scope creep is agreed to verbally under pressure ("haan, woh bhi ho jayega"). There is no safe place to practise saying no.</li>
+  </ul>
+  <h3>Primary user</h3>
+  <div class="card">
+    <span class="k">Persona (illustrative, to be replaced by real interviews)</span>
+    <h4>Riya, freelance Shopify and WordPress developer, Pune</h4>
+    <p>Sells websites at fixed prices between ₹10,000 and ₹80,000. Finds clients through Instagram, referrals and freelance platforms. Gets briefs as PDFs, voice notes and long WhatsApp threads. Has a rough minimum hourly rate in her head but doesn't calculate it per deal. Dreads discovery calls where the client asks "that's included, right?"</p>
+  </div>
+  <h3>Who pays (hypothesis to validate)</h3>
+  <p>Freelancers who sell fixed-price websites and struggle with quoting, discovery calls or scope boundaries. Two price models to test with real freelancers: a <strong>per-deal review</strong> and a <strong>monthly allowance</strong> of reviews. Willingness to pay is treated as unproven until at least five freelancers have used Panga on a real deal.</p>
+</section>
+
+<section id="goals">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Goals &amp; non-goals</h2></div>
+  <div class="grid2">
+    <div class="card">
+      <span class="k">Goals</span>
+      <ul>
+        <li>One complete journey: brief → evidence-backed scope → editable economics → voice rehearsal → revised proposal.</li>
+        <li>Every extracted requirement links to the exact client text it came from.</li>
+        <li>Every number shows its inputs, and the freelancer can edit them.</li>
+        <li>The freelancer leaves with a draft reply they would actually send.</li>
+        <li>Deployed on DigitalOcean with traces that prove it works.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="k">Non-goals</span>
+      <ul>
+        <li>No "bad client" score or judgement of the client as a person. Panga evaluates the work and the economics.</li>
+        <li>No automatic sending of emails or messages.</li>
+        <li>No contracts, invoicing or payment collection.</li>
+        <li>No support for hourly-billed or retainer-only work in v1.</li>
+        <li>No claim of predictive accuracy from synthetic data.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Core journey</h2></div>
+  <p>The worked example below runs through the whole PRD. All figures are example inputs a freelancer would type in, not market data.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Step</th><th>What the freelancer does</th><th>What Panga does</th></tr></thead>
+    <tbody>
+      <tr><td><span class="id">1 · Intake</span></td><td>Uploads the brief PDF, pastes the WhatsApp thread, or records a voice note: "Client offers ₹15,000 for a simple online store."</td><td>Stores files in DigitalOcean Spaces. Transcribes voice notes with ElevenLabs speech-to-text. Starts a deal workflow in Temporal.</td></tr>
+      <tr><td><span class="id">2 · Dossier</span></td><td>Reviews the extracted scope and fixes anything wrong.</td><td>Gemma extracts each requirement with a quote from the source: product migration, payment setup, mobile design, ongoing updates. Lists unanswered questions. Searches past projects for similar work. Researches unfamiliar items with SerpApi and shows the source links.</td></tr>
+      <tr><td><span class="id">3 · Economics</span></td><td>Enters estimated hours per requirement and a minimum hourly rate (pre-filled from remembered preferences).</td><td>Calculates effective hourly rate, floor price and the "what if revisions grow" scenario. All maths runs in plain code, never in the model.</td></tr>
+      <tr><td><span class="id">4 · Rehearsal</span></td><td>Clicks <strong>Bring on the client</strong> and talks.</td><td>An ElevenLabs voice agent, driven by Gemma and grounded in this brief, plays the client and pushes on every gap. Every objection is labelled hypothetical and linked to the brief line it came from.</td></tr>
+      <tr><td><span class="id">5 · Replay</span></td><td>Reviews the call transcript.</td><td>Highlights ambiguous or accidental commitments ("haan, upload kar denge") and turns each one into a scope decision.</td></tr>
+      <tr><td><span class="id">6 · Decision</span></td><td>Picks <strong>Take it</strong>, <strong>Change the deal</strong> or <strong>Walk away</strong>, edits the draft and approves it.</td><td>Generates three options and a draft reply in the freelancer's tone. Saves lessons and corrections for next time.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="requirements">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Requirements</h2></div>
+  <p>Priority: <strong>P0</strong> is required for the submitted journey, <strong>P1</strong> is the sponsor layer around it, <strong>P2</strong> is attempted only if time and data allow.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>ID</th><th>Requirement</th><th>Acceptance criteria</th><th>Pri</th></tr></thead>
+    <tbody>
+      <tr><td><span class="id">IN-1</span></td><td>Accept a brief as PDF, pasted text or pasted chat export.</td><td>PDF under 10 MB and pasted text up to 20,000 characters both produce a dossier. Original file is stored and viewable.</td><td>P0</td></tr>
+      <tr><td><span class="id">IN-2</span></td><td>Accept a voice note.</td><td>Audio upload is transcribed by ElevenLabs speech-to-text. The transcript is treated as a source document with its own evidence links.</td><td>P1</td></tr>
+      <tr><td><span class="id">SC-1</span></td><td>Extract requirements with evidence.</td><td>Each requirement has a title, category and at least one verbatim quote with its source and position. A requirement without a matching quote is dropped or marked "inferred" in a different style.</td><td>P0</td></tr>
+      <tr><td><span class="id">SC-2</span></td><td>List unanswered questions.</td><td>Questions are tied to a requirement (e.g. "Who uploads the 200 products?"). The freelancer can mark each as answered, ask client, or assume.</td><td>P0</td></tr>
+      <tr><td><span class="id">SC-3</span></td><td>Let the freelancer edit scope.</td><td>Add, remove, rename and merge requirements. Edits are saved as corrections and stored for future extractions.</td><td>P0</td></tr>
+      <tr><td><span class="id">SC-4</span></td><td>Research unfamiliar requirements.</td><td>For a requirement the freelancer flags as unfamiliar, show up to five SerpApi results with titles and links, and a short summary that cites them. No claim without a link.</td><td>P1</td></tr>
+      <tr><td><span class="id">SC-5</span></td><td>Show similar past projects.</td><td>Top three past scopes or lessons from Tiger Data by vector similarity, each with what actually happened.</td><td>P1</td></tr>
+      <tr><td><span class="id">EC-1</span></td><td>Calculate deal economics.</td><td>Effective rate, floor price, gap to floor and margin are shown with their formulas. Changing any input updates every number immediately.</td><td>P0</td></tr>
+      <tr><td><span class="id">EC-2</span></td><td>Scope-growth scenario.</td><td>A slider for extra revision rounds and months of updates shows the new effective rate.</td><td>P0</td></tr>
+      <tr><td><span class="id">EC-3</span></td><td>Overrun estimate from history.</td><td>Only if at least 30 real past projects exist: TabPFN predicts an overrun range with a stated data source. Otherwise hidden.</td><td>P2</td></tr>
+      <tr><td><span class="id">RH-1</span></td><td>Voice rehearsal with a simulated client.</td><td>A call starts within 5 seconds of clicking. The client voice responds within about 2 seconds. The persona knows the brief and asks about at least three real gaps.</td><td>P0</td></tr>
+      <tr><td><span class="id">RH-2</span></td><td>Difficulty levels.</td><td>Reasonable, Pushy and From Hell change tone and persistence, never the facts of the brief.</td><td>P1</td></tr>
+      <tr><td><span class="id">RH-3</span></td><td>Grounded, labelled objections.</td><td>Every objection in the replay links to the brief line that prompted it and carries a "Hypothetical" label.</td><td>P0</td></tr>
+      <tr><td><span class="id">RH-4</span></td><td>Text fallback.</td><td>If voice is unavailable, the same rehearsal runs as text chat.</td><td>P0</td></tr>
+      <tr><td><span class="id">RP-1</span></td><td>Detect commitments in the replay.</td><td>Statements that agree to work, time or price are highlighted and classified as in scope, out of scope or ambiguous. Each can be converted into a scope edit.</td><td>P0</td></tr>
+      <tr><td><span class="id">PR-1</span></td><td>Generate three options.</td><td>Smaller package within budget, full-scope package at or above floor, polite decline. Each lists included and excluded items and its effective rate.</td><td>P0</td></tr>
+      <tr><td><span class="id">PR-2</span></td><td>Draft the reply.</td><td>Draft in the freelancer's stored tone (e.g. English, Hinglish, formal or casual). Copy button only; no sending.</td><td>P0</td></tr>
+      <tr><td><span class="id">PR-3</span></td><td>Approval gate.</td><td>The deal stays in "awaiting approval" until the freelancer approves. The workflow survives restarts and can wait for days.</td><td>P1</td></tr>
+      <tr><td><span class="id">MM-1</span></td><td>Remember preferences.</td><td>Minimum rate, tone, "never include" items and past corrections are stored in Backboard and pre-filled on the next deal.</td><td>P1</td></tr>
+      <tr><td><span class="id">OB-1</span></td><td>Trace every agent run.</td><td>Each deal review shows up in Sentry with model calls, tool calls, tokens and latency.</td><td>P1</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="economics">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Economics engine</h2></div>
+  <p>The economics are deterministic code with unit tests. The model never produces a number the freelancer sees. It can only suggest hours, which the freelancer accepts or edits.</p>
+  <pre class="formula">total_hours     = Σ hours(requirement) + comms_hours + revision_rounds × hours_per_round
+effective_rate  = offered_price ÷ total_hours
+floor_price     = total_hours × minimum_rate
+gap_to_floor    = floor_price − offered_price
+scenario_rate   = offered_price ÷ (total_hours + extra_rounds × hours_per_round + extra_update_hours)</pre>
+
+  <h3>Worked example: "a simple online store" for ₹15,000</h3>
+  <p class="muted">Example inputs, entered by the freelancer. Minimum rate: ₹700/hour.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Requirement</th><th>Evidence from client</th><th class="num">Hours</th></tr></thead>
+    <tbody>
+      <tr><td>Store setup and theme</td><td>"simple online store for my clothing brand"</td><td class="num">12</td></tr>
+      <tr><td>Mobile layouts</td><td>"most customers will buy from phone"</td><td class="num">6</td></tr>
+      <tr><td>Payment gateway setup and testing</td><td>"UPI and cards both should work"</td><td class="num">4</td></tr>
+      <tr><td>Product migration (200 × ~4 min)</td><td>"we have around 200 products on Instagram"</td><td class="num">13</td></tr>
+      <tr><td>Post-launch updates (unbounded)</td><td>"small changes later also"</td><td class="num">4</td></tr>
+      <tr><td>Communication and 2 revision rounds</td><td>Freelancer's default</td><td class="num">6</td></tr>
+      <tr class="total"><td>Total</td><td></td><td class="num">45</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Measure</th><th>Calculation</th><th class="num">Result</th></tr></thead>
+    <tbody>
+      <tr><td>Effective rate</td><td>₹15,000 ÷ 45 h</td><td class="num">₹333/h</td></tr>
+      <tr><td>Floor price</td><td>45 h × ₹700</td><td class="num">₹31,500</td></tr>
+      <tr><td>Gap to floor</td><td>₹31,500 − ₹15,000</td><td class="num">₹16,500</td></tr>
+      <tr><td>If revisions grow</td><td>+2 rounds (6 h) and 2 more months of updates (8 h) → 59 h</td><td class="num">₹254/h</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The three options Panga drafts</h3>
+  <div class="grid2">
+    <div class="card"><span class="k" style="color:var(--change)">Change the deal · A</span><h4>Starter, within ₹15,000</h4><p>Ready-made theme with light customisation (8 h), responsive check (2 h), payments (4 h), one revision round (3 h). The client uploads products using a CSV template from the freelancer (1 h). No ongoing updates.</p><p class="mono">18 h → ₹833/h · above floor</p></div>
+    <div class="card"><span class="k" style="color:var(--take)">Take it, repriced · B</span><h4>Full scope, ₹34,000</h4><p>Everything in the brief, including migration of 200 products and a 15-day support window. Later updates billed as a separate monthly plan with fixed hours.</p><p class="mono">45 h → ₹756/h · above floor</p></div>
+    <div class="card"><span class="k" style="color:var(--walk)">Walk away · C</span><h4>Polite decline</h4><p>A short, friendly reply that explains the budget doesn't cover the scope, with an optional referral or a suggestion to start with a smaller package later.</p><p class="mono">0 h · keeps the relationship</p></div>
+  </div>
+</section>
+
+<section id="rehearsal">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Client From Hell mode</h2></div>
+  <p>The voice rehearsal is the feature people will remember. It has to be grounded, fair and clearly fictional.</p>
+  <div class="quote-line">"Uploading the 200 products is included, right? And my team can request changes after launch, na?"<span class="hyp">Hypothetical · from brief lines 4 and 11</span></div>
+  <h3>How the simulated client is built</h3>
+  <ul>
+    <li><strong>Persona prompt</strong> built from the dossier: the offered price, each requirement with its quote, each unanswered question and the selected difficulty.</li>
+    <li><strong>Pressure plan</strong>: before the call, Mastra's client-simulator agent ranks the three to five gaps worth pushing on (ambiguous scope, unbounded support, deadline pressure, price anchoring). The persona works through them during the call.</li>
+    <li><strong>Hard rules</strong>: the simulated client may not invent requirements absent from the brief, may not insult the freelancer, and must stay in character. When the freelancer clearly holds a boundary twice, the client concedes. Rehearsal should feel winnable.</li>
+    <li><strong>Voice</strong>: an ElevenLabs Agent whose language model is set to "Custom LLM" pointing at Panga's own OpenAI-compatible endpoint on DigitalOcean, which calls Gemma with the persona. ElevenLabs handles speech recognition, turn-taking and the voice; Gemma decides what the client says.</li>
+  </ul>
+  <h3>Replay and commitment detection</h3>
+  <p>After the call, the transcript is analysed by the scope-analyst agent. Each freelancer statement that agrees to work, time or money is highlighted:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Freelancer said</th><th>Classified as</th><th>Suggested fix</th></tr></thead>
+    <tbody>
+      <tr><td>"Haan, products upload kar denge."</td><td><span class="pill p-high">Ambiguous commitment</span></td><td>Add "Migration of up to 200 products" to Option B, or exclude it in Option A.</td></tr>
+      <tr><td>"Small changes are fine."</td><td><span class="pill p-high">Unbounded</span></td><td>Replace with "2 revision rounds; later changes billed at ₹700/h".</td></tr>
+      <tr><td>"Launch in two weeks should work."</td><td><span class="pill p-mid">Time commitment</span></td><td>Tie the date to receiving products and content by day 3.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="trust">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Trust rules</h2></div>
+  <p>These rules are product requirements, not guidelines. Each one has a check in the test suite.</p>
+  <ol>
+    <li><strong>Every requirement has evidence.</strong> A requirement without a verbatim source quote is shown as "inferred" and cannot be priced until the freelancer confirms it.</li>
+    <li><strong>Every number has visible inputs.</strong> Click any figure to see its formula and inputs. The model never computes money.</li>
+    <li><strong>Simulated objections are labelled hypothetical.</strong> In the call UI, the replay and the export.</li>
+    <li><strong>Evaluate the work, not the person.</strong> No client risk scores, no labels like "red flag client". Language describes scope and economics.</li>
+    <li><strong>The freelancer approves everything.</strong> Panga drafts; the freelancer sends from their own channel.</li>
+    <li><strong>Client data stays deletable.</strong> One action deletes a deal's files, embeddings and transcripts. Briefs are not used for model training unless the freelancer opts in.</li>
+  </ol>
+</section>
+
+<section id="architecture">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Architecture</h2></div>
+  <p>DigitalOcean runs the web app, the workers, model inference and file storage. Each other sponsor has one job that doesn't overlap with another's.</p>
+  <pre class="mermaid">
+flowchart LR
+  U["Freelancer browser"] --> W["Next.js web app<br/>DO App Platform"]
+  W -->|files| S[("DO Spaces")]
+  W -->|start and signal| T["Temporal<br/>DealReviewWorkflow"]
+  T --> K["Worker on DO<br/>Temporal worker + Mastra agents"]
+  K -->|chat completions| G["Gemma 4<br/>DO Serverless Inference"]
+  K --> P[("Tiger Data<br/>Postgres + pgvector")]
+  K --> B["Backboard<br/>preference memory"]
+  K --> R["SerpApi<br/>research"]
+  W -->|voice call| E["ElevenLabs Agent"]
+  E -->|Custom LLM| X["Client-sim endpoint<br/>DO App Platform"]
+  X --> G
+  K -.->|traces| N["Sentry"]
+  X -.->|traces| N
+  </pre>
+
+  <h3>Separation of responsibilities</h3>
+  <div class="grid2">
+    <div class="card"><span class="k">Mastra vs Temporal</span><p><strong>Mastra</strong> runs agents: prompts, tools, reasoning steps inside one activity. <strong>Temporal</strong> owns the deal's durable state: which stage it is in, retries of failed activities, and waiting for the freelancer's approval for hours or days.</p><p class="muted">Use the Temporal TypeScript SDK directly with Mastra agents called inside activities. Mastra's own Temporal package is marked experimental.</p></div>
+    <div class="card"><span class="k">Tiger Data vs Backboard</span><p><strong>Tiger Data</strong> stores searchable project evidence: past scopes, requirement embeddings, actual-vs-estimated hours, lessons. <strong>Backboard</strong> remembers the freelancer: minimum rate, tone, things they never include, corrections they made.</p></div>
+  </div>
+
+  <h3>Deal workflow</h3>
+  <pre class="mermaid">
+flowchart TD
+  A["Intake<br/>store files, transcribe"] --> B["Extract scope<br/>Gemma + evidence"]
+  B --> C["Enrich<br/>similar projects, research"]
+  C --> D{{"Wait: freelancer confirms<br/>scope and hours"}}
+  D --> E["Compute economics<br/>plain code"]
+  E --> F{{"Wait: rehearsal finished<br/>or skipped"}}
+  F --> G["Analyse replay<br/>commitments"]
+  G --> H["Draft options and reply"]
+  H --> I{{"Wait: approve, edit,<br/>or walk away"}}
+  I --> J["Save lessons<br/>Tiger Data + Backboard"]
+  </pre>
+  <p>The waits are Temporal signals (<code>scopeConfirmed</code>, <code>rehearsalDone</code>, <code>decisionMade</code>). Model and API calls are activities with retry policies, so a slow Gemma response or a SerpApi failure retries instead of losing the deal.</p>
+
+  <h3>Mastra agents and tools</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Agent</th><th>Job</th><th>Tools</th></tr></thead>
+    <tbody>
+      <tr><td>Scope analyst</td><td>Extract requirements with evidence, list questions, classify commitments in the replay.</td><td><code>quoteSpan</code>, <code>findSimilarProjects</code>, <code>getPreferences</code></td></tr>
+      <tr><td>Researcher</td><td>Explain unfamiliar requirements with linked sources.</td><td><code>serpSearch</code></td></tr>
+      <tr><td>Client simulator</td><td>Plan pressure points, then play the client during the call.</td><td><code>getDossier</code></td></tr>
+      <tr><td>Proposal writer</td><td>Write the three options and the reply in the freelancer's tone.</td><td><code>computeEconomics</code> (deterministic), <code>getPreferences</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Stack</h3>
+  <ul>
+    <li><strong>Language</strong>: TypeScript throughout (Next.js app, Mastra, Temporal TypeScript SDK).</li>
+    <li><strong>Model</strong>: Gemma 4 through DigitalOcean Serverless Inference, which is OpenAI-compatible. Stretch: the same model on a GPU Droplet to show fully self-hosted inference. Confirm the exact model ID from <code>/v1/models</code> before building.</li>
+    <li><strong>Structured output</strong>: JSON schema with Zod validation and one repair retry. Evidence quotes are verified by exact string match against the source.</li>
+    <li><strong>Embeddings</strong>: an embedding model available on DigitalOcean inference (verify), stored in pgvector.</li>
+    <li><strong>Temporal</strong>: Temporal Cloud if credits allow, otherwise the Temporal dev server on a DigitalOcean Droplet.</li>
+  </ul>
+</section>
+
+<section id="data">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Data model</h2></div>
+  <p>Postgres on Tiger Data. Files live in DigitalOcean Spaces, referenced by key.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Table</th><th>Key fields</th></tr></thead>
+    <tbody>
+      <tr><td><code>deals</code></td><td>id, freelancer_id, title, offered_price, currency, stage, decision, workflow_id, created_at</td></tr>
+      <tr><td><code>sources</code></td><td>id, deal_id, kind (pdf, text, chat, voice), spaces_key, extracted_text</td></tr>
+      <tr><td><code>requirements</code></td><td>id, deal_id, title, category, status (confirmed, inferred, removed), hours, embedding vector</td></tr>
+      <tr><td><code>evidence</code></td><td>id, requirement_id, source_id, quote, char_start, char_end</td></tr>
+      <tr><td><code>questions</code></td><td>id, deal_id, requirement_id, text, state (open, ask_client, assumed, answered)</td></tr>
+      <tr><td><code>assumptions</code></td><td>deal_id, minimum_rate, comms_hours, revision_rounds, hours_per_round</td></tr>
+      <tr><td><code>rehearsals</code></td><td>id, deal_id, difficulty, elevenlabs_conversation_id, transcript jsonb</td></tr>
+      <tr><td><code>commitments</code></td><td>id, rehearsal_id, utterance, class (in_scope, out_of_scope, ambiguous, time, price), resolution</td></tr>
+      <tr><td><code>proposals</code></td><td>id, deal_id, option (A, B, C), price, hours, included jsonb, excluded jsonb, reply_draft, approved_at</td></tr>
+      <tr><td><code>past_projects</code></td><td>id, freelancer_id, summary, estimated_hours, actual_hours, lessons, embedding vector</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sponsors">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Sponsor tracker</h2></div>
+  <p>Each integration must have a user benefit, a working implementation and demo evidence before it is listed in the post. One submission can enter many categories but can win only once.</p>
+  <p class="muted">Competition is a rough count of the 4,000 most recent #hf26challenge posts that mention the sponsor in their title, description or tags, taken on 16 October. It undercounts, but the comparison is useful.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Sponsor</th><th>Tier</th><th>User benefit</th><th>Implementation</th><th>Demo evidence</th><th>Prize</th><th>Competition</th></tr></thead>
+    <tbody>
+      <tr><td><strong>DigitalOcean</strong></td><td><span class="pill p-core">Core</span></td><td>Private, low-cost hosting of the whole product, including the model.</td><td>App Platform (web, client-sim endpoint, worker), Serverless Inference for Gemma, Spaces for files. Stretch: GPU Droplet.</td><td>Live URL, DO console screenshots, cost per deal review.</td><td class="num">$200</td><td><span class="pill p-low">Low · 3</span></td></tr>
+      <tr><td><strong>Gemma</strong></td><td><span class="pill p-core">Core</span></td><td>An open model reads briefs and plays the client.</td><td>Extraction, client simulation, proposal drafting.</td><td>Model ID in traces, prompt files in the repo.</td><td class="num">$200</td><td><span class="pill p-high">High · 605</span></td></tr>
+      <tr><td><strong>ElevenLabs</strong></td><td><span class="pill p-core">Core</span></td><td>Practise out loud, the way the real call happens.</td><td>Agent with Custom LLM pointing at Panga; speech-to-text for voice notes.</td><td>Recorded rehearsal in the demo video.</td><td class="num">$100</td><td><span class="pill p-mid">Mid · 20</span></td></tr>
+      <tr><td><strong>Mastra</strong></td><td><span class="pill p-core">Core</span></td><td>Reliable, tool-using agents.</td><td>Four agents and their tools.</td><td>Agent code and Mastra traces.</td><td class="num">$100</td><td><span class="pill p-low">Low · 8</span></td></tr>
+      <tr><td><strong>Sentry</strong></td><td><span class="pill p-core">Core</span></td><td>Shows the builder what each review costs and where it is slow.</td><td><code>@mastra/sentry</code> exporter plus Next.js SDK.</td><td>Trace screenshots with tokens, latency and a debugged failure.</td><td class="num">$100</td><td><span class="pill p-mid">Mid · 9</span></td></tr>
+      <tr><td><strong>Temporal</strong></td><td><span class="pill p-wrap">Wrap</span></td><td>A deal can wait days for the freelancer without losing state.</td><td>DealReviewWorkflow with signals and retry policies.</td><td>Temporal UI showing a paused deal and a retried activity.</td><td class="num">$100</td><td><span class="pill p-mid">Mid · 10</span></td></tr>
+      <tr><td><strong>Tiger Data</strong></td><td><span class="pill p-wrap">Wrap</span></td><td>"You did something like this before, and it took 2× longer."</td><td>Postgres with pgvector; similarity search over past scopes.</td><td>Similar-project panel in the demo; SQL in the repo.</td><td class="num">$100</td><td><span class="pill p-low">Low · 6</span></td></tr>
+      <tr><td><strong>Backboard</strong></td><td><span class="pill p-wrap">Wrap</span></td><td>Panga remembers your rate, tone and past corrections.</td><td>One Backboard assistant per freelancer with memory on.</td><td>Second deal pre-filled from the first deal's corrections.</td><td class="num">$100</td><td><span class="pill p-low">Low · 4</span></td></tr>
+      <tr><td><strong>SerpApi</strong></td><td><span class="pill p-wrap">Wrap</span></td><td>Understand unfamiliar requirements before pricing them.</td><td>Researcher agent tool with source links.</td><td>Research card with linked sources in the demo.</td><td class="num">$100</td><td><span class="pill p-low">Low · 7</span></td></tr>
+      <tr><td><strong>.tech domain</strong></td><td><span class="pill p-proc">Process</span></td><td>A real address to share with the first users.</td><td>Claim through Hacktoberfest promos; point at DO App Platform.</td><td>Live link in the post.</td><td class="num">$100</td><td><span class="pill p-low">Low · 1</span></td></tr>
+      <tr><td><strong>Entire</strong></td><td><span class="pill p-proc">Process</span></td><td>Readers can see how the project was built.</td><td>Record the agent sessions used during development.</td><td>Embedded sessions in the post.</td><td class="num">$100</td><td><span class="pill p-mid">Mid · 13</span></td></tr>
+      <tr><td><strong>GitHub Copilot</strong></td><td><span class="pill p-proc">Process</span></td><td>Faster build, Actions for checks.</td><td>Copilot coding agent or CLI for parts of the build; GitHub Actions for tests.</td><td>Copilot-authored PRs, Actions runs.</td><td class="num">$100</td><td><span class="pill p-high">High · 36</span></td></tr>
+      <tr><td><strong>TabPFN</strong></td><td><span class="pill p-cond">Conditional</span></td><td>An overrun range based on the freelancer's own history.</td><td>Only with 30+ real past projects. Synthetic data proves the plumbing only.</td><td>Prediction with data source stated.</td><td class="num">$200</td><td><span class="pill p-high">High · 54</span></td></tr>
+      <tr><td><strong>Tinker</strong></td><td><span class="pill p-cond">Conditional</span></td><td>More accurate scope extraction.</td><td>Fine-tune a model from Tinker's lineup on brief → requirements JSON; compare with a held-out baseline.</td><td>Before/after evaluation table.</td><td class="num">$200</td><td><span class="pill p-low">Low · 7</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><span class="k">Not included</span><p>MongoDB, Render and Arduino are left out because Panga gives them no job that Tiger Data or DigitalOcean doesn't already do.</p></div>
+</section>
+
+<section id="design">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Screens</h2></div>
+  <p>The interface should feel like preparing for a difficult conversation: a case file, an incoming call, a replay, and a decision.</p>
+  <div class="screens">
+    <div class="screen"><div class="bar"><span>01 · Dossier</span><span>₹15,000 offered</span></div><div class="body">
+      <p><strong>Product migration</strong> · 13 h</p>
+      <p class="ev">"we have around 200 products on Instagram"</p>
+      <p><strong>Open question</strong>: Who uploads the products?</p>
+      <p class="muted">Similar past project: took 1.8× the estimate.</p>
+    </div></div>
+    <div class="screen"><div class="bar"><span>02 · Incoming call</span><span>From Hell</span></div><div class="body">
+      <p><strong>Client is calling…</strong></p>
+      <p>"Uploading the 200 products is included, right?"</p>
+      <p class="hyp">Hypothetical · brief line 4</p>
+      <p class="muted">Pressure points left: 3 of 5</p>
+    </div></div>
+    <div class="screen"><div class="bar"><span>03 · Replay</span><span>3 commitments</span></div><div class="body">
+      <p>You: "<mark>Haan, products upload kar denge.</mark>"</p>
+      <p class="muted">Ambiguous commitment → add to Option B or exclude.</p>
+      <p>You: "<mark>Small changes are fine.</mark>"</p>
+      <p class="muted">Unbounded → cap at 2 rounds.</p>
+    </div></div>
+    <div class="screen"><div class="bar"><span>04 · Decision</span><span>Floor ₹31,500</span></div><div class="body">
+      <p><span class="stamp change" style="font-size:14px;padding:3px 8px 1px">Change the deal</span></p>
+      <p>A · Starter ₹15,000 · 18 h · ₹833/h</p>
+      <p>B · Full ₹34,000 · 45 h · ₹756/h</p>
+      <p>C · Decline politely</p>
+    </div></div>
+  </div>
+  <ul>
+    <li>Three decision actions, always in this order and these colours: <strong style="color:var(--take)">TAKE IT</strong> · <strong style="color:var(--change)">CHANGE THE DEAL</strong> · <strong style="color:var(--walk)">WALK AWAY</strong>.</li>
+    <li>Evidence quotes appear inline under each requirement, never hidden behind a tooltip.</li>
+    <li>Numbers use tabular figures; clicking one opens its formula.</li>
+    <li>The call screen shows a hypothetical label for the whole call, not just per line.</li>
+  </ul>
+</section>
+
+<section id="metrics">
+  <div class="sec-head"><span class="sec-num">13</span><h2>Success metrics</h2></div>
+  <div class="grid2">
+    <div class="card"><span class="k">Build quality (by submission)</span>
+      <ul>
+        <li>Full journey completes on the live URL in under 10 minutes.</li>
+        <li>100% of shown requirements have an evidence quote that matches the source exactly.</li>
+        <li>Extraction recall of at least 80% on 10 hand-labelled briefs.</li>
+        <li>Client voice response time under about 2 seconds at the median, measured in Sentry.</li>
+        <li>Economics unit tests pass for all formulas.</li>
+      </ul>
+    </div>
+    <div class="card"><span class="k">Validation (first users)</span>
+      <ul>
+        <li>At least 1 real freelancer runs a real deal before submission (bonus points).</li>
+        <li>At least 5 freelancers within two weeks after submission.</li>
+        <li>Share who change their quote after a review.</li>
+        <li>Answers to: "Would you pay for this per deal, monthly, or not at all?"</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><span class="sec-num">14</span><h2>Build plan</h2></div>
+  <p>About two and a half days to the deadline. Build one complete journey first, deploy it, then add sponsors around that same journey.</p>
+  <div class="timeline">
+    <div class="tl"><div class="when">Block 1 · Fri 16 Oct → Sat 17 Oct morning</div><h4>The journey works locally</h4>
+      <ul>
+        <li>Create the repo (inside the challenge window). Next.js + Mastra skeleton.</li>
+        <li>Confirm Gemma 4 model ID on DigitalOcean Serverless Inference; get a structured extraction with evidence working.</li>
+        <li>Economics engine with unit tests. Dossier and decision screens.</li>
+        <li>Text rehearsal (RH-4) as the first version of the client simulator.</li>
+        <li>Deploy to DigitalOcean App Platform on day one, even if rough.</li>
+      </ul>
+      <div class="gate">Gate: brief → scope → economics → text rehearsal → options, on a live DO URL.</div></div>
+    <div class="tl"><div class="when">Block 2 · Sat 17 Oct</div><h4>Voice and visibility</h4>
+      <ul>
+        <li>ElevenLabs Agent with Custom LLM pointing at the client-sim endpoint.</li>
+        <li>Replay with commitment detection.</li>
+        <li>Sentry with the Mastra exporter. Capture one real bug and its fix for the write-up.</li>
+        <li>Claim the .tech domain and point it at the app.</li>
+      </ul>
+      <div class="gate">Gate: a full voice rehearsal on the live URL, with traces.</div></div>
+    <div class="tl"><div class="when">Block 3 · Sun 18 Oct morning (PDT)</div><h4>The sponsor layer</h4>
+      <ul>
+        <li>Move the stages into a Temporal workflow with signals.</li>
+        <li>Tiger Data: past-project library with pgvector, seeded with the builder's own real past projects.</li>
+        <li>Backboard: preferences and corrections.</li>
+        <li>SerpApi: research card.</li>
+        <li>TabPFN and Tinker only if every gate so far has passed.</li>
+      </ul>
+      <div class="gate">Cut order if behind: Tinker → TabPFN → Temporal → Backboard.</div></div>
+    <div class="tl"><div class="when">Block 4 · Sun 18 Oct afternoon → 11:59 PM PDT</div><h4>First user and the post</h4>
+      <ul>
+        <li>One real freelancer runs one real deal. Record what they said.</li>
+        <li>Demo video: the ₹15,000 store, the Client From Hell call, the replay, the decision.</li>
+        <li>Write the post with the submission template, prize categories and evidence for each.</li>
+        <li>README notes any commits made after the deadline.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section id="risks">
+  <div class="sec-head"><span class="sec-num">15</span><h2>Risks</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Twelve sponsors in about 60 hours</td><td>Shallow integrations that don't win any category.</td><td>Fixed gates per block and a cut order. Five deep integrations beat twelve thin ones.</td></tr>
+      <tr><td>Gemma 4 on DO Serverless Inference is in preview, or slow</td><td>Voice latency feels broken.</td><td>Keep client-sim prompts short; stream responses; fall back to a smaller Gemma variant for the call only.</td></tr>
+      <tr><td>ElevenLabs Custom LLM format changes (newer docs mention separate reasoning output)</td><td>Voice agent can't use Gemma.</td><td>Test the endpoint on day one with a minimal agent. Text rehearsal remains as fallback.</td></tr>
+      <tr><td>Mastra's Temporal package is experimental</td><td>Breaking changes mid-build.</td><td>Use the Temporal SDK directly; call Mastra agents inside activities.</td></tr>
+      <tr><td>Model invents requirements or quotes</td><td>Breaks the core trust promise.</td><td>Exact-match quote verification in code; unmatched items become "inferred" and unpriced.</td></tr>
+      <tr><td>TabPFN-3.5 weights are non-commercial</td><td>Can't ship it in a paid product.</td><td>Hackathon demo only; check the license or use the commercial API before charging.</td></tr>
+      <tr><td>Tinker's model lineup may not include Gemma</td><td>Fine-tuned extractor isn't Gemma.</td><td>That's acceptable: it is a separate narrow extractor, evaluated against the base model.</td></tr>
+      <tr><td>No real past-project data</td><td>Tiger Data search and TabPFN have nothing to show.</td><td>Seed with the builder's own real projects; never present synthetic data as findings.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="submission">
+  <div class="sec-head"><span class="sec-num">16</span><h2>Submission checklist</h2></div>
+  <ul>
+    <li>Post uses the DEV submission template, which adds <code>#devchallenge</code> and <code>#hf26challenge</code>.</li>
+    <li>States who would pay and why, shows a demo, and explains why open innovation matters for Panga.</li>
+    <li>Prize Categories section lists only the sponsors with working integrations and evidence.</li>
+    <li>Includes the first user's story, if one happened.</li>
+    <li>Links the repo, live .tech URL and agent sessions (Entire or DevRelay).</li>
+    <li>Repo and commits started inside the Week 2 window (12–18 October). Post-deadline commits noted in the README.</li>
+    <li>Writing quality carries the most weight: open with the ₹15,000 store story, not the architecture.</li>
+  </ul>
+</section>
+
+<section id="open">
+  <div class="sec-head"><span class="sec-num">17</span><h2>Open questions</h2></div>
+  <ol>
+    <li>Which exact Gemma 4 model ID and context length does DigitalOcean Serverless Inference expose, and what does a deal review cost in tokens?</li>
+    <li>Is Temporal Cloud credit available for participants, or should the dev server run on a Droplet?</li>
+    <li>Which embedding model is available on DigitalOcean inference?</li>
+    <li>Does the ElevenLabs free tier cover enough call minutes for testing and the demo?</li>
+    <li>Which real freelancer will be the first user, and when can they try it?</li>
+    <li>Should the persona speak Hinglish by default for Indian freelancers?</li>
+  </ol>
+</section>
+
+<section id="sources">
+  <div class="sec-head"><span class="sec-num">18</span><h2>Sources</h2></div>
+  <ul class="sources">
+    <li><a href="https://dev.to/challenges/hacktoberfest-week2-2026-10-12">DEV · Hacktoberfest Open-Source AI Challenge: Week 2</a> (prompt, categories, FAQ, rules)</li>
+    <li><a href="https://docs.digitalocean.com/release-notes/inference/index.xml">DigitalOcean inference release notes</a> (Gemma 4 on serverless inference)</li>
+    <li><a href="https://docs.digitalocean.com/products/inference-hub/how-to/si-overview/">DigitalOcean Serverless Inference overview</a></li>
+    <li><a href="https://docs.digitalocean.com/products/marketplace/1-click-models/">DigitalOcean 1-Click Models</a></li>
+    <li><a href="https://elevenlabs.io/docs/eleven-agents/customization/llm/custom-llm">ElevenLabs · Integrate your own model</a></li>
+    <li><a href="https://mastra.ai/integrations/deploy/temporal">Mastra · Temporal integration</a> (marked experimental)</li>
+    <li><a href="https://docs.sentry.io/platforms/javascript/guides/express/configuration/integrations/mastra/">Sentry · Mastra integration</a></li>
+    <li><a href="https://docs.backboard.io/concepts/memory">Backboard · Memory</a></li>
+    <li><a href="https://tinker-docs.thinkingmachines.ai/model-lineup">Tinker · Model lineup</a></li>
+    <li><a href="https://docs.priorlabs.ai/models">Prior Labs · TabPFN models and licenses</a></li>
+  </ul>
+</section>
+
+<footer>Panga PRD v1.0 · 16 October 2026 · Figures in the worked example are illustrative inputs, not market data.</footer>
+</main>
+</div>

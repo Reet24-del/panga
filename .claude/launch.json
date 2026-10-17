@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "panga",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "mock-services",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/mock-services.mjs"],
+      "port": 4010
+    },
+    {
+      "name": "panga-mock",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:mock"],
+      "port": 3100
+    }
+  ]
+}
