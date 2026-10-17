@@ -1,30 +1,16 @@
-// The Temporal worker: runs deal workflows and their activities.
-// Start it with `npm run worker` next to the web app.
+// The Temporal worker as its own process: `npm run worker` next to the web
+// app (App Platform runs it as a worker component).
 
-import { NativeConnection, Worker } from '@temporalio/worker';
 import { env } from '../env';
-import * as activities from './activities';
+import { createWorker } from './run-worker';
 
 async function main(): Promise<void> {
   try {
     process.loadEnvFile('.env.local');
   } catch {
-    // No .env.local (App Platform passes variables directly).
+    // No .env.local (the host passes variables directly).
   }
-  if (!env.temporalAddress) throw new Error('Set TEMPORAL_ADDRESS to run the worker.');
-  if (!env.databaseUrl) throw new Error('Set DATABASE_URL: the worker and the web app must share one database.');
-  const connection = await NativeConnection.connect({
-    address: env.temporalAddress,
-    tls: env.temporalApiKey ? true : undefined,
-    apiKey: env.temporalApiKey || undefined,
-  });
-  const worker = await Worker.create({
-    connection,
-    namespace: env.temporalNamespace,
-    taskQueue: env.temporalTaskQueue,
-    workflowsPath: require.resolve('./workflows'),
-    activities,
-  });
+  const worker = await createWorker();
   console.log(`[worker] polling task queue "${env.temporalTaskQueue}" on ${env.temporalAddress} (${env.temporalNamespace})`);
   await worker.run();
 }

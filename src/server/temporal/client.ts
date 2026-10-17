@@ -11,6 +11,7 @@ export function temporalClient(): Promise<Client> {
       address: env.temporalAddress,
       tls: env.temporalApiKey ? true : undefined,
       apiKey: env.temporalApiKey || undefined,
+      metadata: { 'temporal-namespace': env.temporalNamespace },
       connectTimeout: '5 seconds',
     });
     return new Client({ connection, namespace: env.temporalNamespace });

@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/bundle-workflows.mjs",
     "start": "next start",
     "worker": "tsx src/server/temporal/worker.ts",
     "test": "vitest run",

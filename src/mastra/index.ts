@@ -4,6 +4,7 @@
 
 import { Agent } from '@mastra/core/agent';
 import { Mastra } from '@mastra/core/mastra';
+import { InMemoryStore } from '@mastra/core/storage';
 import { Observability } from '@mastra/observability';
 import { SentryExporter } from '@mastra/sentry';
 import { env } from '@/server/env';
@@ -56,7 +57,10 @@ function observability() {
 }
 
 function create() {
-  return new Mastra({ agents, observability: observability() });
+  // Deals, memory and history live in Panga's own Postgres. Mastra only keeps
+  // per-run scratch state (no threads or agent memory), so in-memory storage
+  // is the deliberate choice, not a fallback.
+  return new Mastra({ agents, storage: new InMemoryStore(), observability: observability() });
 }
 
 const holder = globalThis as unknown as { __pangaMastra?: ReturnType<typeof create> };

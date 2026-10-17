@@ -106,6 +106,8 @@ This is how the live demo runs, at no cost.
 3. Build command `npm ci && npm run build`. Start command `node --max-old-space-size=400 node_modules/next/dist/bin/next start`. Health check `/api/health`.
 4. Environment variables: `DO_MODEL_ACCESS_KEY`, `DATABASE_URL` (the Tiger connection string), `PANGA_MODEL=gemma-4-31B-it`, `PANGA_EMBEDDING_MODEL=qwen3-embedding-0.6b`, `MASTRA_TELEMETRY_DISABLED=true`.
 
+5. Optional partners: `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN`, `SERPAPI_API_KEY`, `BACKBOARD_API_KEY`, `ELEVENLABS_API_KEY` with `ELEVENLABS_AGENT_ID`, `PANGA_SIM_SECRET` and `PANGA_PUBLIC_URL` (run `npm run setup:voice` once), and for Temporal Cloud `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY` plus `PANGA_EMBEDDED_WORKER=true`. The free plan has no background workers, so the Temporal worker then runs inside the web server, using the workflow bundle `npm run build` writes to `.temporal/`.
+
 A hosted database is required on the free plan: the embedded PGlite database needs about 900 MB of memory, more than the free instance has. Tiger hands out `sslmode=require`, which Panga reads the libpq way (encrypted, certificate not pinned) so its private CA connects.
 
 ## Deploy to DigitalOcean App Platform

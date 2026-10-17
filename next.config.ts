@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
     '@mastra/sentry',
     '@mastra/otel-exporter',
     '@temporalio/client',
+    '@temporalio/worker',
+    '@temporalio/activity',
     '@electric-sql/pglite',
     '@electric-sql/pglite-pgvector',
     'pg',
