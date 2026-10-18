@@ -38,7 +38,7 @@ So I built **Panga**, a deal room that reads the brief *and* the chat, finds the
 **Lena hai? Negotiate karna hai? Ya chhodna hai?**
 *Take it, change the deal, or walk away?*
 
-{% youtube YOUR_VIDEO_ID %}
+{% youtube R5gJBSatjeI %}
 
 *The demo video above is Panga running live on the Sharma deal, narrated with ElevenLabs.*
 
@@ -174,20 +174,119 @@ Browser ──► Next.js on Render ──► Mastra agents ──► Gemma 4 on
 Voice call: Browser ──► ElevenLabs agent ──(Custom LLM)──► Panga /api/sim ──► Gemma
 ```
 
-How each partner earns its place:
-
-- **Gemma 4 on DigitalOcean Serverless Inference:** every model call, through an OpenAI-compatible API. Embeddings (Qwen3) come from the same place.
-- **Mastra:** four agents (scope analyst, researcher, client simulator, proposal writer) with per-call instructions and streaming.
-- **ElevenLabs:** the voice practice call. The clever bit: the ElevenLabs agent's *Custom LLM* is **Panga's own endpoint**, so ElevenLabs does the listening and speaking while Gemma decides what the client says, grounded in this brief. It also transcribes clients' voice notes (Scribe). And yes, the demo narration is ElevenLabs too.
-- **Tiger Data:** Postgres with pgvector. Past projects are found by **hybrid search**: 70% meaning (vector similarity) plus 30% keywords (full-text rank).
-- **Backboard:** remembers your minimum rate, tone, work you never include, and every correction you make to an extracted scope. It feeds them to the next brief.
-- **SerpApi:** live research with numbered, linked sources. Claims without a source are dropped.
-- **Render:** hosts the app on the free plan, and redeploys on every push.
-- **Sentry:** Mastra's Sentry exporter traces every agent run and model call (tokens, latency), with custom spans around quote checking and research.
-
-- **Temporal:** one durable workflow per deal. It retries analysis, waits for the practice call and your approval, and two weeks later asks how the project went. The tests run those long timers in seconds on Temporal's time-skipping server. *Honest note: the free live demo runs the same steps inside the web app, because Temporal Cloud needs a card and I kept this build at ₹0. Add the keys and one flag, and the worker starts inside the web server.*
-
 **106 automated tests** cover the money maths (including a worked example from the spec), quote matching, the practice call's hidden tags, reply amount checks, the database layer and the deal workflow.
+
+## Every sponsor in Panga, and exactly what it does
+
+Panga uses ten of this challenge's partners. Nine run in the live demo. One (Temporal) is built and tested but switched off on the free deployment, and I say why below.
+
+| Sponsor | Its job in Panga | Live in the demo? |
+|---|---|---|
+| DigitalOcean | Runs every AI call: Gemma 4 and the Qwen3 embeddings | Yes |
+| Gemma | The only reasoning model | Yes |
+| Mastra | The four agents | Yes |
+| ElevenLabs | Voice practice call, voice-note transcription, demo narration | Yes |
+| Tiger Data | The database, and hybrid search over past projects | Yes |
+| Backboard | Remembers your rates, tone and corrections | Yes |
+| SerpApi | Live web research with sources | Yes |
+| Sentry | Traces every agent run, model call and token | Yes |
+| Render | Hosts the app and the agents | Yes |
+| Temporal | A durable workflow for each deal | Built and tested, not live |
+
+### DigitalOcean: where the AI runs
+
+- **What it is:** DigitalOcean's Gradient AI Platform includes Serverless Inference, which serves open-weight models behind an OpenAI-compatible API and bills per token.
+- **What it does in Panga:** it runs **every** AI call. Gemma 4 (`gemma-4-31B-it`) handles all the reasoning, and Qwen3 (`qwen3-embedding-0.6b`) makes the embeddings behind past-project search.
+- **How it's wired:** the Mastra agents point at `https://inference.do-ai.run/v1` with a DigitalOcean model key (`src/mastra/index.ts`). Embeddings come from the same endpoint's `/v1/embeddings` (`src/server/embeddings.ts`). The repo also ships an App Platform spec (`.do/app.yaml`). Panga first ran on App Platform, then I moved hosting to Render's free plan to keep the build at ₹0.
+- **Where you see it:** every result in the demo: the work list, the practice call, the replay, the research and the reply.
+
+### Gemma: the brain
+
+- **What it is:** Google's family of open-weight models.
+- **What it does in Panga:** Gemma 4 31B is the **only** reasoning model. It reads the brief and the chat, plays the client on the practice call, reviews the call for promises, summarises research and drafts the reply.
+- **How it's wired:** DigitalOcean serves it (above) and Mastra calls it (below). Because any model can be wrong, Panga checks Gemma's work in code: quotes must match the client's text, all money maths is TypeScript, and every amount in a reply is checked against Panga's own numbers.
+- **Where you see it:** Sentry counts 24 Gemma calls and 27,063 tokens on the live app this week, all on `gemma-4-31B-it`.
+
+### Mastra: the agents
+
+- **What it is:** an open-source TypeScript framework for building AI agents.
+- **What it does in Panga:** four agents run on Gemma, each with its own instructions:
+
+| Agent | Its job | Where you see it |
+|---|---|---|
+| Scope analyst | Lists the work in the brief and chat, quoting the client. Later, reviews the practice call for promises. | Step 01 and the replay |
+| Researcher | Explains an unfamiliar requirement from live search results | "What's involved?" |
+| Client simulator | Plays the client on the practice call, by text or voice, streaming | Step 03 |
+| Proposal writer | Drafts the reply in your tone | Step 04 |
+
+- **How it's wired:** `src/mastra/index.ts` defines the agents. JSON steps use `generate`, and the live call uses `stream`. Mastra's observability exporter sends every run to Sentry.
+
+### ElevenLabs: the voice
+
+The ElevenLabs category names three uses: give an open-source agent a voice, transcribe audio, or narrate the demo. Panga does all three.
+
+1. **A voice for the open-model client.** The voice practice call is an ElevenLabs Conversational AI agent whose **Custom LLM is Panga's own endpoint** (`/api/sim/v1/chat/completions`, locked with a shared secret). ElevenLabs listens, handles turn-taking and speaks. Gemma, through the client-simulator agent, decides every word the client says, based on this deal's brief. The browser starts the call with a short-lived signed URL from Panga, so the API key never reaches the browser.
+2. **Transcription.** "Add their voice note" sends a client's voice note to ElevenLabs Scribe (`scribe_v2`), and the text joins the brief for Gemma to read.
+3. **Narration.** The demo video's voice is ElevenLabs text-to-speech (voice "George", `eleven_multilingual_v2`). Hindi lines are written in Devanagari so they're pronounced correctly, and I checked every clip by transcribing it back with Scribe.
+
+### Tiger Data: the database and the search
+
+- **What it is:** managed Postgres with pgvector, running on Tiger Data's free plan.
+- **What it does in Panga:** it stores deals, practice calls and your library of past projects, and finds the past projects most like a new brief.
+- **How it's wired:** every past project is saved with a Qwen3 embedding (pgvector) and a full-text index. One SQL query runs a **hybrid search**: score = 0.7 × vector similarity + 0.3 × keyword rank (`src/server/projects-repo.ts`).
+- **Where you see it:** past projects that match a new deal, and the Memory & library page.
+
+### Backboard: the memory
+
+- **What it is:** an API that gives AI apps long-term memory and search over it.
+- **What it does in Panga:** it remembers you between deals: your minimum hourly rate, currency, tone, work you never include, and every correction you make to an extracted work list.
+- **How it's wired:** each workspace gets one Backboard assistant, and its ID is kept in Postgres. Preferences and corrections are saved as Backboard memories. When a new brief arrives, Panga **searches those memories with the brief's text** and puts the best matches into the scope analyst's prompt (`recallForBrief` in `src/server/memory.ts`). A correction you made last month shapes this month's work list.
+- **Where you see it:** the Memory & library page.
+
+### SerpApi: the research
+
+- **What it is:** an API that returns search engine results as JSON.
+- **What it does in Panga:** it powers **"What's involved?"** on any work item, for when you don't know how big something like "weekly online tests" really is.
+- **How it's wired:** the top five Google results from SerpApi go to the researcher agent, which must cite them as [1], [2] and so on. Citations that don't point to a real result are removed, and an answer with no valid citation is replaced by the sources themselves. Each search is its own Sentry span (`panga.research.search`).
+
+### Sentry Agent Tracing: watching the agents work
+
+- **What it is:** Sentry's tracing for AI agents. Every agent run, model call, token count and cost becomes a span you can inspect.
+- **How it's set up:** Mastra's Sentry exporter (`@mastra/sentry`) is plugged into Panga's Mastra instance, so every agent run and Gemma call is traced without extra code per call. Sentry's Node instrumentation adds the Postgres queries to Tiger and the HTTP calls to Backboard, SerpApi and DigitalOcean to the same trace. I added custom spans around the non-AI steps (`panga.verify_quotes`, `panga.research`, `panga.research.search`). Errors are reported with the step that failed, such as `memory.recall` or `elevenlabs.transcribe`.
+
+![Sentry's AI Agents dashboard for Panga: Gemma calls, tokens, cost and duration, and a list of traces with time, tokens and cost for each](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/09-sentry-agents.png)
+
+- **How it performs** on the live app over the last 7 days (the `panga` project only, so these are my test runs and the demo):
+
+| Agent run | Time | Tokens |
+|---|---|---|
+| Scope analyst, reading a full brief | 28–47 s | about 2,000 |
+| Scope analyst, reviewing a practice call | 4–7 s | 750–900 |
+| Client simulator, one turn of the call | 1.0–2.5 s | 870–1,000 |
+| Proposal writer, drafting the reply | 5.5 s | 600 |
+
+  In total, 24 Gemma calls used 27,063 tokens. Sentry estimates every trace at **less than $0.01**.
+
+![One Sentry trace: the scope analyst's 45-second Gemma call, with the Tiger queries and Backboard calls that ran before it](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/10-sentry-trace.png)
+
+- **What I found:**
+  - **Reading the brief is the slow step.** It took 45 s in the trace above, 351% slower than the average Gemma call (10 s). But the request that starts it returns in **343 ms**, because the analysis runs after the response. The trace shows why Panga can show a live "reading" screen instead of a frozen button.
+  - **A new workspace pays a one-time 236 ms** to create its Backboard assistant (`POST /assistants`). Later deals skip that step because the ID is saved in Postgres. The waterfall shows the lookup, the create and the save in order.
+  - **The prompt fills 1% of Gemma's 256K context window**, so even a long WhatsApp thread has plenty of room.
+  - **A client-simulator turn takes 1–2.5 s**, which is quick enough for a spoken conversation.
+- **How it helps me debug:** when something fails, the error lands in Sentry tagged with the step, inside the same trace as the model call and the database queries. So I can tell whether Gemma, Postgres or a partner API was at fault.
+
+### Render: where Panga lives
+
+- **What it is:** a cloud hosting platform.
+- **What it does in Panga:** it runs the whole live app: the Next.js site, the four Mastra agents, and the Custom LLM endpoint that the ElevenLabs voice agent calls during a practice call. So Render is the runtime for the agents, not just a host for static pages.
+- **How it's wired:** a free web service that builds with `npm ci && npm run build`, checks health at `/api/health` and redeploys on every push to `main`. Node starts with a 400 MB memory cap to fit the 512 MB plan, and the app runs at around 210 MB.
+
+### Temporal: built and tested, not live
+
+- **What it is:** a workflow engine that makes long-running work durable. It survives restarts and retries failed steps.
+- **What it does in the code:** one workflow per deal (`dealReview`). It retries the analysis (3 attempts, starting at 5 s). It waits up to 30 days for the practice call, the scope confirmation and your decision. Then, 14 days after the decision, it asks how the project went.
+- **The honest status:** the tests run this workflow, long timers included, in seconds on Temporal's time-skipping test server. **The live demo does not use Temporal**, because Temporal Cloud asked for a card and I kept this build at ₹0. Instead, the live app runs the same steps inside the web process. Setting `TEMPORAL_ADDRESS` (plus a key) and `PANGA_EMBEDDED_WORKER=true` starts the worker inside the web server.
 
 ## The parts that fought back
 
@@ -212,16 +311,20 @@ Some of the most useful lessons came from things breaking.
 
 ## Prize categories
 
-- **Best Use of DigitalOcean:** Gemma and the embeddings run on DigitalOcean Serverless Inference, and there's an App Platform spec in the repo (`.do/app.yaml`).
-- **Best Use of Gemma:** Gemma 4 does every reasoning step: extraction, research summaries, the pretend client, replays and replies.
-- **Best Use of Render:** the live app runs on Render's free plan.
-- **Best Use of ElevenLabs:** a voice practice call with Panga as the agent's Custom LLM, Scribe transcription of voice notes, and the demo narration.
-- **Best Use of Mastra:** four agents on an open model.
-- **Best Use of Tiger Data:** pgvector hybrid search over past projects.
-- **Best Use of Backboard:** memory that makes the next extraction better.
-- **Best Use of SerpApi:** cited research on unfamiliar requirements.
-- **Best Use of Sentry Agent Tracing:** traces of every agent run, with tokens and latency.
-- **Best Use of Temporal:** a durable per-deal workflow, built and tested (see the honest note above).
+I'm entering the ten categories explained above:
+
+- Best Use of **DigitalOcean**
+- Best Use of **Gemma**
+- Best Use of **Render**
+- Best Use of **ElevenLabs**
+- Best Use of **Mastra**
+- Best Use of **Tiger Data**
+- Best Use of **Backboard**
+- Best Use of **SerpApi**
+- Best Use of **Sentry Agent Tracing**
+- Best Use of **Temporal** (built and tested, but not live; see its section)
+
+Panga doesn't use TabPFN, Tinker, Arduino, Entire, GitHub Copilot, MongoDB Atlas or a .tech domain, so I'm not entering those.
 
 ## What's next
 
