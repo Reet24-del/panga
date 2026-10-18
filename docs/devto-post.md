@@ -4,15 +4,6 @@ published: false
 tags: devchallenge, hf26challenge, opensource, ai
 ---
 
-<!--
-BEFORE PUBLISHING (delete this block):
-1. Upload the video to YouTube (unlisted is fine) and replace YOUR_VIDEO_ID below.
-2. Drag the images from demo/post-images/ into the DEV editor and replace each IMAGE-… placeholder with the URL DEV gives you.
-3. Add a Sentry trace screenshot where it says IMAGE-sentry-trace (sentry.io → panga → Traces → open one "scope-analyst" run).
-4. Fill in "My first user" honestly, or delete that section.
-5. Cover image: upload demo/post-images/01-hero.png as the post's cover.
--->
-
 *This is a submission for the [Hacktoberfest Open-Source AI Challenge: Week 2](https://dev.to/challenges/hacktoberfest-week2-2026-10-12): Side Hustle.*
 
 It's 9:41 on a Tuesday night when Mr Sharma's email lands.
@@ -70,7 +61,7 @@ Panga turns a messy deal into four steps. Here's what it did with Mr Sharma's me
 
 ### 01 The work: find what's hiding in the chat
 
-![The work: every item quotes the client, hidden items are marked](IMAGE-02-the-work)
+![The work: every item quotes the client, hidden items are marked](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/02-the-work.png)
 
 Gemma reads the brief and the chat and lists every piece of work. Panga found **the website from the email and five more jobs in the chat**: UPI fee payments, a student login for notes, weekly online tests, a Hindi version, and topper photos every result season.
 
@@ -86,7 +77,7 @@ Unsure what an online test system involves? **What's involved?** runs a live web
 
 ### 02 The money: the real hourly rate
 
-![The money: 92 hours, ₹130 an hour, ₹70,000 to be worth it](IMAGE-04-the-money)
+![The money: 92 hours, ₹130 an hour, ₹70,000 to be worth it](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/04-the-money.png)
 
 All of that work adds up to about **92 hours**. At ₹12,000 that's **₹130 an hour** against a ₹700 minimum. To be worth your time, the full job should be **₹70,000**.
 
@@ -94,7 +85,7 @@ This part is plain TypeScript, not AI. Every number has a **"How?"** that shows 
 
 ### 03 Client from hell: practise the call
 
-![Practice call with the pretend client](IMAGE-05-practice-call)
+![Practice call with the pretend client](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/05-practice-call.png)
 
 A pretend client who has read *only this brief* calls you, by text or by voice, and pushes on every gap using his own messages. In the demo I answered the way most of us do, a little too nicely:
 
@@ -102,13 +93,13 @@ A pretend client who has read *only this brief* calls you, by text or by voice, 
 
 When the call ends, the replay shows exactly what that cost:
 
-![Replay: Panga flags the free portal you just promised](IMAGE-06-replay)
+![Replay: Panga flags the free portal you just promised](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/06-replay.png)
 
 That easy "no problem" is flagged as **extra work** you just promised for free. The price talk is flagged too, with a suggestion for pinning each one down. You can add the promise to the work list in one click.
 
 ### 04 Your call: take it, change it, or walk
 
-![Three options: ₹12,000 starter, ₹70,000 full scope, or walk away](IMAGE-07-your-call)
+![Three options: ₹12,000 starter, ₹70,000 full scope, or walk away](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/07-your-call.png)
 
 Panga lays out three options:
 
@@ -118,7 +109,7 @@ Panga lays out three options:
 
 Pick one, and it drafts the reply in your tone, **including Hinglish**. It then checks that **every amount in the reply matches its own numbers**, so a hallucinated "₹9,000" can't sneak into a message to your client.
 
-![The drafted reply in Hinglish](IMAGE-08-reply)
+![The drafted reply in Hinglish](https://raw.githubusercontent.com/Reet24-del/panga/main/docs/images/08-reply.png)
 
 You approve it. **Panga never messages your client. You do.**
 
@@ -194,8 +185,6 @@ How each partner earns its place:
 - **Render:** hosts the app on the free plan, and redeploys on every push.
 - **Sentry:** Mastra's Sentry exporter traces every agent run and model call (tokens, latency), with custom spans around quote checking and research.
 
-  ![A Sentry trace of one deal analysis](IMAGE-sentry-trace)
-
 - **Temporal:** one durable workflow per deal. It retries analysis, waits for the practice call and your approval, and two weeks later asks how the project went. The tests run those long timers in seconds on Temporal's time-skipping server. *Honest note: the free live demo runs the same steps inside the web app, because Temporal Cloud needs a card and I kept this build at ₹0. Add the keys and one flag, and the worker starts inside the web server.*
 
 **106 automated tests** cover the money maths (including a worked example from the spec), quote matching, the practice call's hidden tags, reply amount checks, the database layer and the deal workflow.
@@ -220,10 +209,6 @@ Some of the most useful lessons came from things breaking.
 | Database | Tiger Data free service | ₹0 |
 | Model | Gemma on DigitalOcean (trial credit) | well under ₹1 per deal |
 | Research, memory, voice, tracing | SerpApi, Backboard, ElevenLabs, Sentry free plans | ₹0 |
-
-## My first user
-
-[Write this honestly before publishing, or delete the section. Who tried Panga on a real deal? What did it find? Did they say they'd pay, and how much? What did they ask for next?]
 
 ## Prize categories
 
