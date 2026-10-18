@@ -162,12 +162,16 @@ textarea {
   border-bottom: 1px solid var(--rule);
 }
 
+/* The top bar spans the whole window: wordmark at the far left, nav at the
+   far right (also when the nav wraps to its own row on phones). */
 .topbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding-block: 14px;
+  padding-left: max(clamp(16px, 2.5vw, 32px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 2.5vw, 32px), env(safe-area-inset-right, 0px));
   flex-wrap: wrap;
 }
 
@@ -201,6 +205,7 @@ textarea {
 .nav {
   display: flex;
   gap: 4px;
+  margin-left: auto;
 }
 
 .nav a {

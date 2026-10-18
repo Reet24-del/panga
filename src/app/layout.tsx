@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <header className="topbar">
-          <div className="shell topbar-inner">
+          <div className="topbar-inner">
             <Link href="/" className="wordmark" aria-label="Panga home">
               <Logo />
               <span className="tagline">Know what you’re agreeing to</span>
